@@ -1,4 +1,4 @@
-from util import PriorityQueue
+from util import PriorityQueue, PriorityQueueWithFunction
 # search.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -117,7 +117,6 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
     pq = PriorityQueue()
     pq.push((problem.getStartState(), [], 0), 0)
     visited = set()
@@ -141,7 +140,23 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def cost_func(tup):
+        node, path, cost_so_far = tup
+        return cost_so_far + heuristic(node, problem)
+
+    pq = PriorityQueueWithFunction(cost_func)
+    pq.push((problem.getStartState(), [], 0))
+    visited = set()
+    while pq:
+        (coords, path, cost) = pq.pop()
+        if coords not in visited:
+            if problem.isGoalState(coords):
+                return path
+            visited.add(coords)
+            for node, dir, step_cost in problem.getSuccessors(coords):
+                pq.push((node, path + [dir], cost + step_cost))
+    return pq
+
 
 
 # Abbreviations
