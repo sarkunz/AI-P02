@@ -119,17 +119,16 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     pq = PriorityQueue()
-    pq.push((problem.getStartState(), []), 0)
+    pq.push((problem.getStartState(), [], 0), 0)
     visited = set()
     while pq:
-        (coords, path) = pq.pop()
-        print(coords, path)
+        (coords, path, cost) = pq.pop()
         if coords not in visited:
             if problem.isGoalState(coords):
                 return path
             visited.add(coords)
             for suc in problem.getSuccessors(coords):
-                pq.push((suc[0], path + [suc[1]]), suc[2])
+                pq.push((suc[0], path + [suc[1]], cost + suc[2]), cost + suc[2])
     return pq
 
 def nullHeuristic(state, problem=None):
