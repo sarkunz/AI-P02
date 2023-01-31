@@ -137,26 +137,46 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+    
+# def aStarSearch1(problem, heuristic=nullHeuristic):
+#     """Search the node that has the lowest combined cost and heuristic first."""
+#     def costFunc(tup):
+#         node, path, cost_so_far = tup
+#         return cost_so_far + heuristic(node, problem)
+
+#     pq = PriorityQueueWithFunction(costFunc)
+#     pq.push((problem.getStartState(), [], 0))
+#     visited = set()
+#     while not pq.isEmpty():
+#         (node, path, cost) = pq.pop()
+#         if node[0] not in visited:
+#             if problem.isGoalState(node):
+#                 return path
+#             visited.add(node[0])
+#             for node, dir, step_cost in problem.getSuccessors(node):
+#                 pq.push((node, path + [dir], cost + step_cost))
+#     return pq
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    def cost_func(tup):
-        node, path, cost_so_far = tup
-        return cost_so_far + heuristic(node, problem)
 
-    pq = PriorityQueueWithFunction(cost_func)
-    pq.push((problem.getStartState(), [], 0))
+    pq = PriorityQueue()
     visited = set()
-    while pq:
-        (coords, path, cost) = pq.pop()
-        if coords not in visited:
-            if problem.isGoalState(coords):
-                return path
-            visited.add(coords)
-            for node, dir, step_cost in problem.getSuccessors(coords):
-                pq.push((node, path + [dir], cost + step_cost))
-    return pq
+    pq.push((problem.getStartState(), [], 0), 0)
 
+    while not pq.isEmpty():
+        node = pq.pop()
+        if node[0] not in visited:
+            visited.add(node[0])
+
+            if problem.isGoalState(node[0]):
+                return node[1]
+
+            for successor in problem.getSuccessors(node[0]):
+                cur_cost =  list(node)[2] + successor[2]
+                pq.push((successor[0], node[1] + [successor[1]], cur_cost),
+                        cur_cost + heuristic(successor[0],problem))
 
 
 # Abbreviations
