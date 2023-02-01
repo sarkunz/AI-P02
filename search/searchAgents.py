@@ -309,7 +309,6 @@ class CornersProblem(search.SearchProblem):
             else:
                 cornerBools = cornerBools + (False,)
 
-
         return (self.startingPosition, cornerBools)
 
     def isGoalState(self, state):
@@ -346,7 +345,6 @@ class CornersProblem(search.SearchProblem):
 
                 if nextState in self.corners:
                     ind = self.corners.index(nextState)
-
                     # update corner list- remake it bc tuples are immutable :/
                     corns = ()
                     for i in range(0, 4):
@@ -355,7 +353,7 @@ class CornersProblem(search.SearchProblem):
                         else:
                             corns = corns + (visitedCorners[i],)
                     visitedCorners = corns
-
+                
                 successors.append(((nextState, visitedCorners), action, 1))
 
         self._expanded += 1  # DO NOT CHANGE
@@ -397,7 +395,7 @@ def cornersHeuristic(state, problem):
 
     max_distance = 0
     for i in range(0,4):
-        if cornerBools[i]:
+        if cornerBools[i]: #don't count it if we've already seen it
             continue
 
         cornX, cornY = corners[i]
@@ -499,7 +497,15 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+
+    #lets be a little greedy and just return the max distance to food
+    #would probs be better if we returned the max path to food but meh
+    maxDist = 0
+    for foodCoords in foodGrid.asList():
+        dist = manhattanDistance(position[0], position[1], foodCoords[0], foodCoords[1])
+        if dist  > maxDist:
+            maxDist = dist
+    return maxDist
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
